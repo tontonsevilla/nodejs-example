@@ -1,9 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const dishRouter = require('./routes/dishRouter');
+const dishRouter = express.Router();
 
-app.use('/dishes', dishRouter);
+dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
 .all((req,res,next) => {
