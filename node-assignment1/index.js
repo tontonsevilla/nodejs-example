@@ -10,9 +10,13 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
 
-const dishRouter = require('./routes/dishRouter');
+const dishRouter = require('./routes/dishRouter'),
+      promotionRouter = require('./routes/promoRouter'),
+      leaderRouter = require('./routes/leaderRouter');
 
 app.use('/dishes', dishRouter);
+app.use('/promotions', promotionRouter);
+app.use('/leaders', leaderRouter);
 
 // CREATE SERVER
 const server = http.createServer(app);
