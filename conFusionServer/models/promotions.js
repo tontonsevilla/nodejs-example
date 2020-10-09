@@ -23,7 +23,7 @@ var promotionSchema = new Schema({
     },
     description: {
         type: String,
-        required: true
+        default: ''
     },
     featured: {
         type: Boolean,
