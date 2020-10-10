@@ -15,6 +15,8 @@ var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
 
+var config = require('./config');
+
 var app = express();
 
 // Secure traffic only
@@ -27,38 +29,20 @@ app.all('*', (req, res, next) => {
   }
 });
 
-//Authentication using Passport
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use(passport.initialize());
-app.use(passport.session());
-
-function auth (req, res, next) {
-  console.log(req.user);
-
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    err.status = 403;
-    next(err);
-  }
-  else {
-        next();
-  }
-}
-
-app.use(auth);
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routers
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
 app.use('/dishes',dishRouter);
 app.use('/promotions',promoRouter);
 app.use('/leaders',leaderRouter);
@@ -67,7 +51,7 @@ const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes');
 
-const url = 'mongodb://localhost:27017/conFusion';
+const url = config.mongoUrl;
 const connect = mongoose.connect(url);
 
 connect.then((db) => {
