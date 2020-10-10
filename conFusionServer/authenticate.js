@@ -8,6 +8,8 @@ var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config.js');
+const { use } = require('passport');
+const { Unauthorized } = require('http-errors');
 
 // Passport Setup
 passport.use(new LocalStrategy(User.authenticate()));
@@ -41,3 +43,13 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+exports.verifyAdmin = (req, res, next) => {
+    console.log("Calling verifyAdmin()");
+
+    if (req && req.user && req.user.admin === false) {
+        res.status(403).end("You are not authorized to perform this operation!");
+    } else {
+        next();
+    }
+
+};

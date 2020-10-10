@@ -1,13 +1,23 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-
 const bodyParser = require('body-parser');
 var User = require('../models/user');
-
 var authenticate = require('../authenticate');
+const Users = require('../models/user');
 
 router.use(bodyParser.json());
+
+router.route('/')
+.get(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
+    Users.find({})
+    .then((users) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(users);
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
 
 router.post('/signup', (req, res, next) => {
   User.register(new User({username: req.body.username}), 
@@ -48,7 +58,7 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 });
 
 
-router.get('/logout', (req, res) => {
+router.get('/logout', (req, res, next) => {
   if (req.session) {
     req.session.destroy();
     res.clearCookie('session-id');
